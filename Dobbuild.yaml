@@ -29,7 +29,7 @@ jobs:
   - name: Updating Runner Server
     tasks:
       shell:
-        enabled: true
+        enabled: false
         shell: bash
         steps:
         - sudo apt-get update -y
@@ -37,8 +37,8 @@ jobs:
   - name: Git Checkout one
     tasks:
       checkout:
-        enabled: true
-        private_repo: true
+        enabled: false
+        private_repo: false
         # --- required / important fields your function expects ---
         clone_dir: /home/crowuser/crowfrontend
         source_url: env=SOURCE_URL
@@ -50,7 +50,7 @@ jobs:
   - name: Image Build Stage
     tasks:
       docker_build:
-        enabled: true
+        enabled: false
         image_name: env=IMAGE_NAME
         build_tag: V.0.0.1
         dockerfile_path: /home/crowuser/crowfrontend/Dockerfile     
@@ -58,7 +58,7 @@ jobs:
   - name: docker push stage
     tasks:
       docker_push:
-        enabled: false
+        enabled: true
         provider: azure
         image_name: env=IMAGE_NAME
         image_tag: V.0.0.1
