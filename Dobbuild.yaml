@@ -37,7 +37,7 @@ jobs:
   - name: Git Checkout one
     tasks:
       checkout:
-        enabled: false
+        enabled: true
         private_repo: true
         # --- required / important fields your function expects ---
         clone_dir: /home/crowuser/crowfrontend
