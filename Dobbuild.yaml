@@ -1,1 +1,66 @@
+version: '1.0'
+mode: remote
+identifier: AzureCrowRunner
+category: Production
+username: crowuser
+environment:
+  # === Crowstore-backed values ===
+  SOURCE_URL:   { value: crowstore://anishfrontendurl }
+  GIT_TOKEN:    { value: crowstore://anishgithubtoken }
+  
+  DOCKER_USERNAME:    { value: crowstore://dockerusername }
+  DOCKER_PASSWORD:    { value: crowstore://dockerpassword }
 
+  IMAGE_NAME:    { value: crowstore://anishfrontendimage }
+
+  # These must match the *names after* crowstore:// exactly (uppercased, no extra underscores).
+  CROWSTORE_TOKEN_ANISHFRONTENDURL:   { value: f3784bc9e241a64faeaa3f9ce8f3941c }
+
+  CROWSTORE_TOKEN_ANISHGITHUBTOKEN:    { value: 09423f25e67ac976484f550499163beb }
+ 
+  CROWSTORE_TOKEN_DOCKERUSERNAME: { value: 96432ccb7604b08bc8e62fcdb593e192 }
+  CROWSTORE_TOKEN_DOCKERPASSWORD: { value: f4cdb4396653f858b2bc1a2897a354ac }
+  
+  CROWSTORE_TOKEN_ANISHFRONTENDIMAGE: { value: b3b04a4aaebb14c3fecea4fd226dcf98 }
+
+jobs:
+- name: CROW MAIN WEBSITE BUILD
+  stages:
+  - name: Updating Runner Server
+    tasks:
+      shell:
+        enabled: true
+        shell: bash
+        steps:
+        - sudo apt-get update -y
+  # ======== Core: Checkout (invokes your Python helper under the hood new) ========
+  - name: Git Checkout one
+    tasks:
+      checkout:
+        enabled: false
+        private_repo: true
+        # --- required / important fields your function expects ---
+        clone_dir: /home/crowuser/crowfrontend
+        source_url: env=SOURCE_URL
+        branches: 
+        - master
+        provider: github
+        username: anishks07
+        token: env=GIT_TOKEN
+  - name: Image Build Stage
+    tasks:
+      docker_build:
+        enabled: false
+        image_name: env=IMAGE_NAME
+        build_tag: V.0.0.1
+        dockerfile_path: /home/crowuser/crowfrontend/Dockerfile     
+
+  - name: docker push stage
+    tasks:
+      docker_push:
+        enabled: false
+        provider: azure
+        image_name: env=IMAGE_NAME
+        image_tag: V.0.0.1
+        username: env=DOCKER_USERNAME
+        password: env=DOCKER_PASSWORD
