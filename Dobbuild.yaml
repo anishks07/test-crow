@@ -50,7 +50,7 @@ jobs:
   - name: Image Build Stage
     tasks:
       docker_build:
-        enabled: false
+        enabled: true
         image_name: env=IMAGE_NAME
         build_tag: V.0.0.1
         dockerfile_path: /home/crowuser/crowfrontend/Dockerfile     
